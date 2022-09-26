@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+option csharp_namespace = "CSSimulator";
+import "Messages.proto";
+import "google/protobuf/empty.proto";
+
+
+service ChargerGrain {
+  rpc StartCharging (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc StopCharging (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ReceiveMsgFromCharger (MessageFromCharger) returns (google.protobuf.Empty);
+}

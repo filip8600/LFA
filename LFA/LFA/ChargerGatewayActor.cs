@@ -1,5 +1,6 @@
 ﻿using Proto;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace LFA
 {
@@ -9,6 +10,12 @@ namespace LFA
 
     public class ChargerGatewayActor : IActor
     {
+        //private readonly ActorSystem actorSystem;
+        //public ChargerGatewayActor(ActorSystem actorSystem)
+        //{
+        //    this.actorSystem = actorSystem;
+        //}
+
         public Task ReceiveAsync(IContext context)
         {
             var msg =context.Message;
@@ -33,11 +40,12 @@ namespace LFA
 
         private void Setup(WebSocketCreated word)
         {
+            //Forbind til virtuel actor
         }
 
         private void SendMessage(MessageFromCharger message)
         {
-            Console.WriteLine(message.buffer);
+            Console.WriteLine(Encoding.Default.GetString(message.buffer[0..18]));
         }
 
         private void ReceiveCommand(CommandToCharger command)

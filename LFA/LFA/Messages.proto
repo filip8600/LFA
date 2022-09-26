@@ -1,0 +1,7 @@
+﻿syntax = "proto3";
+option csharp_namespace = "CSSimulator";
+
+message MessageFromCharger {
+	string msg = 1;
+	string from = 2;
+}
