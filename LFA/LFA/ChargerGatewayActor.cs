@@ -6,14 +6,15 @@ using System.Text;
 
 namespace LFA
 {
-    record CommandToCharger(string command, string sender);
-    record MessageFromCharger(WebSocketReceiveResult message, byte[] buffer);
-    record WebSocketCreated(string message);
+    record CommandToCharger(byte[] command, string sender);
+    record MessageFromCharger(WebSocketReceiveResult Message, byte[] buffer);
+    record WebSocketCreated(string message,WebSocket ws);
 
     public class ChargerGatewayActor : IActor
     {
         private string identity="uninitializedChargerActor";
         private ChargerGrainClient virtualGrain;
+        private WebSocket websocket;
         //private readonly ActorSystem actorSystem;
         //public ChargerGatewayActor(ActorSystem actorSystem)
         //{
@@ -31,7 +32,7 @@ namespace LFA
                     Setup(word, context);
                     break;
                 case CommandToCharger command:
-                    ReceiveCommand(command);
+                    ReceiveCommandAsync(command);
                     break;
                 case MessageFromCharger message:
                     SendMessage(message);
@@ -46,7 +47,7 @@ namespace LFA
         {
             identity = word.message;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
-            //Todo: Send hello message
+            //virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = context.Self,SerialNumber=identity });
         }
 
         private async void SendMessage(MessageFromCharger message)
@@ -60,10 +61,11 @@ namespace LFA
 
         }
 
-        private void ReceiveCommand(CommandToCharger command)
+        private async Task ReceiveCommandAsync(CommandToCharger command)
         {
-            Console.WriteLine(command.sender + command.command);
-            //Todo: Send message via WebSocket
+            Console.WriteLine("forwarding command to charger");
+            await websocket.SendAsync(command.command, WebSocketMessageType.Text, true, CancellationToken.None);
+            //Todo: return OK to grain
         }
 
     }

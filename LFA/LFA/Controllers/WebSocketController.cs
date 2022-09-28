@@ -37,14 +37,14 @@ namespace LFA.Controllers
                     if (!HttpContext.Request.Headers.TryGetValue("serial-number", out identity)){
                         identity = "unknown";
                     }
-                    actorSystem.Root.Send(pid, new WebSocketCreated(identity));
+                    actorSystem.Root.Send(pid, new WebSocketCreated(identity,webSocket));
 
                     try
                     {
                         //Recieve messages:
                         WebSocketReceiveResult receiveResult;
                         do
-                        {
+                        {//Todo: brug pipes i stedet for buffer
                             var buffer = new byte[1024 * 4];
                             receiveResult = await webSocket.ReceiveAsync(
                                                new ArraySegment<byte>(buffer), CancellationToken.None);

@@ -8,4 +8,5 @@ service ChargerGrain {
   rpc StartCharging (google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc StopCharging (google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc ReceiveMsgFromCharger (MessageFromCharger) returns (google.protobuf.Empty);
+  rpc NewWebSocketFromCharger (ChargerActorIdentity) returns (google.protobuf.Empty);
 }
