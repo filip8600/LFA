@@ -1,5 +1,6 @@
 ﻿using Proto;
 using Proto.Cluster;
+using Proto.Cluster.Consul;
 using Proto.Cluster.Partition;
 using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
@@ -22,14 +23,14 @@ public static class ActorSystemConfiguration
             // remote configuration
 
             var remoteConfig = GrpcNetRemoteConfig
-                .BindTo("192.168.35.136",1234);
+                .BindTo("localhost");
 
             // cluster configuration
 
             var clusterConfig = ClusterConfig
                 .Setup(
                     clusterName: "CSSimulatorCluster",
-                    clusterProvider: new TestProvider(new TestProviderOptions(), new InMemAgent()),
+                    clusterProvider: new ConsulProvider(new ConsulProviderConfig()),
                     identityLookup: new PartitionIdentityLookup()
                 );
 

@@ -1,4 +1,6 @@
-﻿using Proto;
+﻿using CSSimulator;
+using Proto;
+using Proto.Cluster;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -30,7 +32,7 @@ namespace LFA
                     ReceiveCommand(command);
                     break;
                 case MessageFromCharger message:
-                    SendMessage(message);
+                    SendMessage(message, context);
                     break;
                 default:
                     break;
@@ -43,9 +45,14 @@ namespace LFA
             //Forbind til virtuel actor
         }
 
-        private void SendMessage(MessageFromCharger message)
+        private async void SendMessage(MessageFromCharger message, IContext context)
         {
             Console.WriteLine(Encoding.Default.GetString(message.buffer[0..18]));
+            var grain = context.System.Cluster().GetChargerGrain(identity: "klaus");
+            CSSimulator.MessageFromCharger msg=new CSSimulator.MessageFromCharger();
+            msg.Msg = Encoding.Default.GetString(message.buffer[0..18]);
+            msg.From = "kurt";
+            await grain.ReceiveMsgFromCharger(msg,CancellationToken.None);
         }
 
         private void ReceiveCommand(CommandToCharger command)

@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddActorSystem();
 builder.Services.AddControllers();
-
+builder.Services.AddHostedService<ActorSystemClusterHostedService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
