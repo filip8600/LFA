@@ -12,6 +12,8 @@ namespace LFA
 
     public class ChargerGatewayActor : IActor
     {
+        private string identity="uninitializedChargerActor";
+        private ChargerGrainClient virtualGrain;
         //private readonly ActorSystem actorSystem;
         //public ChargerGatewayActor(ActorSystem actorSystem)
         //{
@@ -26,13 +28,13 @@ namespace LFA
                 case Started:
                     break;
                 case WebSocketCreated word:
-                    Setup(word);
+                    Setup(word, context);
                     break;
                 case CommandToCharger command:
                     ReceiveCommand(command);
                     break;
                 case MessageFromCharger message:
-                    SendMessage(message, context);
+                    SendMessage(message);
                     break;
                 default:
                     break;
@@ -40,24 +42,28 @@ namespace LFA
             return Task.CompletedTask;
         }
 
-        private void Setup(WebSocketCreated word)
+        private void Setup(WebSocketCreated word, IContext context)
         {
-            //Forbind til virtuel actor
+            identity = word.message;
+            virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
+            //Todo: Send hello message
         }
 
-        private async void SendMessage(MessageFromCharger message, IContext context)
+        private async void SendMessage(MessageFromCharger message)
         {
-            Console.WriteLine(Encoding.Default.GetString(message.buffer[0..18]));
-            var grain = context.System.Cluster().GetChargerGrain(identity: "klaus");
             CSSimulator.MessageFromCharger msg=new CSSimulator.MessageFromCharger();
             msg.Msg = Encoding.Default.GetString(message.buffer[0..18]);
-            msg.From = "kurt";
-            await grain.ReceiveMsgFromCharger(msg,CancellationToken.None);
+            msg.From = identity;
+            Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
+            
+            await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
+
         }
 
         private void ReceiveCommand(CommandToCharger command)
         {
             Console.WriteLine(command.sender + command.command);
+            //Todo: Send message via WebSocket
         }
 
     }

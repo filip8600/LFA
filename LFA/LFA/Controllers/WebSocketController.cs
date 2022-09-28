@@ -1,6 +1,7 @@
 ﻿using CSSimulator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Proto;
 using Proto.Cluster;
 using System.Net;
@@ -32,11 +33,14 @@ namespace LFA.Controllers
                 using (WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync())
                 {
                     var pid = actorSystem.Root.Spawn(chargerProps);
+                    StringValues identity;
+                    if (!HttpContext.Request.Headers.TryGetValue("serial-number", out identity)){
+                        identity = "unknown";
+                    }
+                    actorSystem.Root.Send(pid, new WebSocketCreated(identity));
+
                     try
                     {
-                        actorSystem.Root.Send(pid, new WebSocketCreated("Alex"));
-                        var a=actorSystem.Cluster().GetChargerGrain(identity: "dav");
-                        await a.StartCharging(CancellationToken.None);
                         //Recieve messages:
                         WebSocketReceiveResult receiveResult;
                         do
@@ -47,7 +51,7 @@ namespace LFA.Controllers
                             actorSystem.Root.Send(pid, new MessageFromCharger(receiveResult, buffer));
                         } while (!receiveResult.CloseStatus.HasValue);
                     }
-                    catch (WebSocketException e)//Handle client disconnect (Without proper close message)
+                    catch (WebSocketException)//Handle client disconnect (Without proper close message)
                     {
                         webSocket.Abort();
                         webSocket.Dispose();

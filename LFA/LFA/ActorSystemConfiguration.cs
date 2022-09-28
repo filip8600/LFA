@@ -1,4 +1,5 @@
-﻿using Proto;
+﻿using CSSimulator;
+using Proto;
 using Proto.Cluster;
 using Proto.Cluster.Consul;
 using Proto.Cluster.Partition;
@@ -23,7 +24,8 @@ public static class ActorSystemConfiguration
             // remote configuration
 
             var remoteConfig = GrpcNetRemoteConfig
-                .BindTo("localhost");
+                .BindTo("localhost")
+                .WithProtoMessages(MessagesReflection.Descriptor);
 
             // cluster configuration
 
