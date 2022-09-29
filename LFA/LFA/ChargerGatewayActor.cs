@@ -7,14 +7,14 @@ using System.Text;
 namespace LFA
 {
     //Messages for internal use in Project. External messages in "ChargerGatewayMessages.proto"
-    record MessageFromCharger(WebSocketReceiveResult Message, byte[] buffer);
+    record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
     record WebSocketCreated(string message,WebSocket ws);
 
     public class ChargerGatewayActor:IActor
     {
         private string identity="uninitializedChargerActor";
-        private ChargerGrainClient virtualGrain;
-        private WebSocket websocket;
+        private ChargerGrainClient? virtualGrain;
+        private WebSocket? websocket;
 
 
         public Task ReceiveAsync(IContext context)
@@ -43,6 +43,7 @@ namespace LFA
 
         private void Setup(WebSocketCreated word, IContext context)
         {
+            websocket = word.ws;
             identity = word.message;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
             PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
@@ -56,7 +57,6 @@ namespace LFA
             msg.Msg = Encoding.Default.GetString(message.buffer);
             msg.From = identity;
             Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
-            
             await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
 
         }
