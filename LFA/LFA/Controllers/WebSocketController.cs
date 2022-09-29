@@ -27,7 +27,6 @@ namespace LFA.Controllers
         [HttpGet("/ws")]
         public async Task<IActionResult> GetAsync()
         {
-            Console.WriteLine("ny req");
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
                 using (WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync())
@@ -37,6 +36,7 @@ namespace LFA.Controllers
                     if (!HttpContext.Request.Headers.TryGetValue("serial-number", out identity)){
                         identity = "unknown";
                     }
+                    Console.WriteLine("Connected to socket with serial-number: "+ identity);
                     actorSystem.Root.Send(pid, new WebSocketCreated(identity,webSocket));
 
                     try

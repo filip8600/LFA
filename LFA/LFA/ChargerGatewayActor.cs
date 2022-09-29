@@ -47,7 +47,9 @@ namespace LFA
         {
             identity = word.message;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
-            //virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = context.Self,SerialNumber=identity });
+            PID pid = new() { Id = context.Self.Id, Address = context.Self.Address };
+            _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pid, SerialNumber = identity }, CancellationToken.None); ;
+            Console.WriteLine("Virtual Actor Notified of new connection");
         }
 
         private async void SendMessage(MessageFromCharger message)

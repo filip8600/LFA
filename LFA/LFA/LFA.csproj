@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Messages.proto" />
     <None Remove="protoactor\Protos.proto" />
   </ItemGroup>
 
@@ -23,19 +22,22 @@
     <PackageReference Include="Proto.Cluster" Version="0.33.0" />
     <PackageReference Include="Proto.Cluster.CodeGen" Version="0.33.0" />
     <PackageReference Include="Proto.Cluster.Consul" Version="0.33.0" />
-    <PackageReference Include="Proto.Cluster.TestProvider" Version="0.33.0" />
     <PackageReference Include="Proto.Remote" Version="0.33.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-	  <Protobuf Include="Messages.proto" />
+	<Protobuf Include="Messages.proto" />
     <Protobuf Include="protoactor\Protos.proto" />
   </ItemGroup>
 
   <ItemGroup>
-	  <ProtoGrain Include="Grains.proto" AdditionalImportDirs="." />
+	<ProtoGrain Include="Grains.proto" AdditionalImportDirs="." />
 	<ProtoGrain Include="Messages.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Protocol\" />
   </ItemGroup>
 
 </Project>
