@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+option csharp_namespace = "LFA";
+import "google/protobuf/empty.proto";
+
+//Public facing messages (from CentralSystem) to ChargerGatewayActor
+message CommandToChargerMessage
+{
+	string payload = 1;
+}

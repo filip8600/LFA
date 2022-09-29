@@ -20,11 +20,11 @@ public static class ActorSystemConfiguration
             var actorSystemConfig = ActorSystemConfig
                 .Setup();
 
-            // remote configuration
+        // remote configuration
 
-            var remoteConfig = GrpcNetRemoteConfig
-                .BindTo("localhost")
-                .WithProtoMessages(MessagesReflection.Descriptor);
+        var remoteConfig = GrpcNetRemoteConfig
+            .BindTo("localhost")
+            .WithProtoMessages(new[] { MessagesReflection.Descriptor, ChargerGatewayMessagesReflection.Descriptor });
 
             // cluster configuration
 

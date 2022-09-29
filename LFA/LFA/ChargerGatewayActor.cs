@@ -6,23 +6,21 @@ using System.Text;
 
 namespace LFA
 {
-    record CommandToCharger(byte[] command, string sender);
+    //Messages for internal use in Project. External messages in "ChargerGatewayMessages.proto"
     record MessageFromCharger(WebSocketReceiveResult Message, byte[] buffer);
     record WebSocketCreated(string message,WebSocket ws);
 
-    public class ChargerGatewayActor : IActor
+    public class ChargerGatewayActor:IActor
     {
         private string identity="uninitializedChargerActor";
         private ChargerGrainClient virtualGrain;
         private WebSocket websocket;
-        //private readonly ActorSystem actorSystem;
-        //public ChargerGatewayActor(ActorSystem actorSystem)
-        //{
-        //    this.actorSystem = actorSystem;
-        //}
+
 
         public Task ReceiveAsync(IContext context)
         {
+            Console.WriteLine("actor receive");
+
             var msg =context.Message;
             switch (msg)
             {
@@ -31,8 +29,8 @@ namespace LFA
                 case WebSocketCreated word:
                     Setup(word, context);
                     break;
-                case CommandToCharger command:
-                    ReceiveCommandAsync(command);
+                case CommandToChargerMessage command:
+                    CommandToCharger(command);
                     break;
                 case MessageFromCharger message:
                     SendMessage(message);
@@ -47,15 +45,15 @@ namespace LFA
         {
             identity = word.message;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
-            PID pid = new() { Id = context.Self.Id, Address = context.Self.Address };
-            _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pid, SerialNumber = identity }, CancellationToken.None); ;
+            PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
+            _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pidDto, SerialNumber = identity }, CancellationToken.None); ;
             Console.WriteLine("Virtual Actor Notified of new connection");
         }
 
         private async void SendMessage(MessageFromCharger message)
         {
             CSSimulator.MessageFromCharger msg=new CSSimulator.MessageFromCharger();
-            msg.Msg = Encoding.Default.GetString(message.buffer[0..18]);
+            msg.Msg = Encoding.Default.GetString(message.buffer);
             msg.From = identity;
             Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
             
@@ -63,12 +61,12 @@ namespace LFA
 
         }
 
-        private async Task ReceiveCommandAsync(CommandToCharger command)
+        public async Task CommandToCharger(LFA.CommandToChargerMessage request)
         {
             Console.WriteLine("forwarding command to charger");
-            await websocket.SendAsync(command.command, WebSocketMessageType.Text, true, CancellationToken.None);
+            byte[] bytes = Encoding.ASCII.GetBytes(request.Payload);
+            await websocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
             //Todo: return OK to grain
         }
-
     }
 }
