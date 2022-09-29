@@ -1,4 +1,4 @@
-﻿using CSSimulator;
+﻿using ChargerMessages;
 using Proto;
 using Proto.Cluster;
 using Proto.Cluster.Consul;

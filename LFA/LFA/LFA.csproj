@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="protoactor\Protos.proto" />
+    <None Remove="Protocol\protoactor\Protos.proto" />
     <None Remove="Protocol\ChargerGatewayMessages.proto" />
   </ItemGroup>
 
@@ -34,13 +34,13 @@
   <ItemGroup>
 	  <Protobuf Include="Protocol\ChargerGatewayMessages.proto" />
 
-	  <Protobuf Include="Messages.proto" />
-    <Protobuf Include="protoactor\Protos.proto" />
+	  <Protobuf Include="Protocol\Messages.proto" />
+    <Protobuf Include="Protocol\protoactor\Protos.proto" />
   </ItemGroup>
 
   <ItemGroup>
-	<ProtoGrain Include="Grains.proto" AdditionalImportDirs="." />
-	<ProtoGrain Include="Messages.proto" />
+	<ProtoGrain Include="Protocol\Grains.proto" AdditionalImportDirs="." />
+	
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using CSSimulator;
+﻿using ChargerMessages;
 using Proto;
 using Proto.Cluster;
 using System.Net.WebSockets;
@@ -53,15 +53,15 @@ namespace LFA
 
         private async void SendMessage(MessageFromCharger message)
         {
-            CSSimulator.MessageFromCharger msg=new CSSimulator.MessageFromCharger();
-            msg.Msg = Encoding.Default.GetString(message.buffer);
+            ChargerMessages.MessageFromCharger msg =new();
+            msg.Msg = Encoding.Default.GetString(message.Buffer);
             msg.From = identity;
             Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
             await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
 
         }
 
-        public async Task CommandToCharger(LFA.CommandToChargerMessage request)
+        public async void CommandToCharger(LFA.CommandToChargerMessage request)
         {
             Console.WriteLine("forwarding command to charger");
             byte[] bytes = Encoding.ASCII.GetBytes(request.Payload);

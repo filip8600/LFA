@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
-import "protoactor/Protos.proto";
-option csharp_namespace = "CSSimulator";
+import "Protocol/protoactor/Protos.proto";
+option csharp_namespace = "ChargerMessages";
 
 message MessageFromCharger {
 	string msg = 1;
