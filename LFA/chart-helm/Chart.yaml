@@ -1,0 +1,5 @@
+apiVersion: v2
+name: charger-cluster
+description: Cluster for charger actor system
+type: application
+version: 1.0.0

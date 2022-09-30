@@ -2,6 +2,7 @@
 using Proto;
 using Proto.Cluster;
 using Proto.Cluster.Consul;
+using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Partition;
 using Proto.DependencyInjection;
 using Proto.Remote;
@@ -11,7 +12,7 @@ namespace LFA;
 
 public static class ActorSystemConfiguration
 {
-    public static void AddActorSystem(this IServiceCollection serviceCollection)
+    public static void AddActorSystem(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddSingleton(provider =>
         {
@@ -23,7 +24,7 @@ public static class ActorSystemConfiguration
         // remote configuration
 
         var remoteConfig = GrpcNetRemoteConfig
-            .BindTo("localhost")
+            .BindToAllInterfaces(advertisedHost: configuration["ProtoActor:AdvertisedHost"])
             .WithProtoMessages(new[] { MessagesReflection.Descriptor, ChargerGatewayMessagesReflection.Descriptor });
 
             // cluster configuration
@@ -31,7 +32,7 @@ public static class ActorSystemConfiguration
             var clusterConfig = ClusterConfig
                 .Setup(
                     clusterName: "CSSimulatorCluster",
-                    clusterProvider: new ConsulProvider(new ConsulProviderConfig()),
+                    clusterProvider: new KubernetesProvider(),
                     identityLookup: new PartitionIdentityLookup()
                 );
 

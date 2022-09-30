@@ -1,7 +1,5 @@
 using LFA;
-using Proto;
-using System.Net;
-using System.Net.WebSockets;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddActorSystem();
+builder.Services.AddActorSystem(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddHostedService<ActorSystemClusterHostedService>();
 var app = builder.Build();

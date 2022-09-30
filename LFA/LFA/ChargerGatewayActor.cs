@@ -19,8 +19,6 @@ namespace LFA
 
         public Task ReceiveAsync(IContext context)
         {
-            Console.WriteLine("actor receive");
-
             var msg =context.Message;
             switch (msg)
             {
