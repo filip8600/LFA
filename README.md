@@ -13,8 +13,8 @@ Systemkrav:
 
 Opsætning og kørsel:
 - ```git clone https://github.com/filip8600/LFA```
-- Byg og Push Image (Fra mappe med Dockerfile) ```docker build -t filip8600/LFA:latest```
-- Push til Image Repository (Fx Docker Hub) ```docker push filip8600/LFA:latest```
+- Byg og Push Image (Fra mappe med Dockerfile) ```docker build . -t filip8600/lfa:latest```
+- Push til Image Repository (Fx Docker Hub) ```docker push filip8600/lfa:latest```
 - Start Kluster ```./minicube.exe start```
 - Release image til Cluster: ```helm install LFA chart-helm```
 - Verificer at pods kører: ```Kubectl get pods```
