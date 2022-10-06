@@ -22,7 +22,7 @@ namespace LFA.Controllers
         }
 
         [HttpGet("/ws")]
-        public async Task<IActionResult> GetAsync()
+        public async Task GetAsync()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
@@ -45,7 +45,10 @@ namespace LFA.Controllers
                             var buffer = new byte[1024 * 4];
                             receiveResult = await webSocket.ReceiveAsync(
                                                new ArraySegment<byte>(buffer), CancellationToken.None);
-                            actorSystem.Root.Send(pid, new MessageFromCharger(receiveResult, buffer));
+                            if (!receiveResult.CloseStatus.HasValue)
+                            {
+                                actorSystem.Root.Send(pid, new MessageFromCharger(receiveResult, buffer));
+                            }
                         } while (!receiveResult.CloseStatus.HasValue);
                     }
                     catch (WebSocketException)//Handle client disconnect (Without proper close message)
@@ -67,8 +70,8 @@ namespace LFA.Controllers
                 await HttpContext.Response.WriteAsync("Sorry, only WebSocket accepted");
 
             }
-
-            return new EmptyResult();
+            //return new EmptyResult();
+            
         }
     }
 }
