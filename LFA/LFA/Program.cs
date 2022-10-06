@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddActorSystem(builder.Configuration);
+if (builder.Environment.IsDevelopment()) builder.Services.AddConsulActorSystem();
+else builder.Services.AddKubernetesActorSystem(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddHostedService<ActorSystemClusterHostedService>();
 var app = builder.Build();

@@ -38,7 +38,11 @@ namespace LFA
             }
             return Task.CompletedTask;
         }
-
+        /// <summary>
+        /// Prepare Actor with necesary information. Called by HttpController upon established WS Connection
+        /// </summary>
+        /// <param name="word">Custom type with serial-number and WS-connection</param>
+        /// <param name="context">Actor system context</param>
         private void Setup(WebSocketCreated word, IContext context)
         {
             websocket = word.ws;
