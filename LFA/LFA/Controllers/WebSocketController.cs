@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChargerMessages;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Proto;
+using Proto.Cluster;
 using System.Net;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace LFA.Controllers
 {
@@ -33,6 +36,21 @@ namespace LFA.Controllers
                     if (!HttpContext.Request.Headers.TryGetValue("serial-number", out identity)){
                         identity = "unknown";
                     }
+                    StringValues auth;
+                    if (!HttpContext.Request.Headers.TryGetValue("Authorization", out auth))
+                    {
+                        //HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        await HttpContext.Response.WriteAsync("Sorry, You need a Authorization header");
+                        return;
+                    }
+                    AuthenticationMessage authMsg= new AuthenticationMessage();
+                    string[] base64Strings = auth.ToString().Split(" ");
+                    if (base64Strings.Length != 2) return;
+                    authMsg.Credentials = base64Strings[1]; // removes Basic from authorization
+                    AuthenticationResponse resp = await actorSystem.Cluster().GetAuthGrain("auth").Authenticate(authMsg, CancellationToken.None);
+                    if (resp?.Validated == true) { Console.WriteLine("Actor Validated"); }
+                    else { Console.WriteLine("Actor NOT Validated"); }
+
                     Console.WriteLine("Connected to socket with serial-number: "+ identity);
                     actorSystem.Root.Send(pid, new WebSocketCreated(identity,webSocket));
 
