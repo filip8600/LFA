@@ -61,6 +61,7 @@ namespace LFA
             Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
             await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
 
+
         }
 
         public async void CommandToCharger(LFA.CommandToChargerMessage request)

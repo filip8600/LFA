@@ -1,7 +1,7 @@
 ﻿using Proto;
 using Proto.Cluster;
 
-namespace LFA;
+namespace LFA.ActorSetup;
 
 public class ActorSystemClusterHostedService : IHostedService
 {

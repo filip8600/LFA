@@ -1,5 +1,4 @@
-using LFA;
-
+using LFA.ActorSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 

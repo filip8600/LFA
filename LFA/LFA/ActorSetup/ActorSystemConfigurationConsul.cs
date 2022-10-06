@@ -2,17 +2,19 @@
 using Proto;
 using Proto.Cluster;
 using Proto.Cluster.Consul;
-using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Partition;
 using Proto.DependencyInjection;
 using Proto.Remote;
 using Proto.Remote.GrpcNet;
 
-namespace LFA;
-
-public static class ActorSystemConfiguration
+namespace LFA.ActorSetup;
+/// <summary>
+/// Configure actorsystem for communication between LFA and CS
+/// Prerequisites: Download and run Consul: https://www.consul.io/downloads + ".\consul.exe agent -dev"
+/// </summary>
+public static class ActorSystemConfigurationConsul
 {
-    public static void AddKubernetesActorSystem(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static void AddConsulActorSystem(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(provider =>
         {
@@ -21,18 +23,18 @@ public static class ActorSystemConfiguration
             var actorSystemConfig = ActorSystemConfig
                 .Setup();
 
-        // remote configuration
+            // remote configuration
 
-        var remoteConfig = GrpcNetRemoteConfig
-            .BindToAllInterfaces(advertisedHost: configuration["ProtoActor:AdvertisedHost"])
-            .WithProtoMessages(new[] { MessagesReflection.Descriptor, ChargerGatewayMessagesReflection.Descriptor });
+            var remoteConfig = GrpcNetRemoteConfig
+                .BindToLocalhost()
+                .WithProtoMessages(new[] { MessagesReflection.Descriptor, ChargerGatewayMessagesReflection.Descriptor });
 
             // cluster configuration
 
             var clusterConfig = ClusterConfig
                 .Setup(
                     clusterName: "CSSimulatorCluster",
-                    clusterProvider: new KubernetesProvider(),
+                    clusterProvider: new ConsulProvider(new ConsulProviderConfig()),
                     identityLookup: new PartitionIdentityLookup()
                 );
 
