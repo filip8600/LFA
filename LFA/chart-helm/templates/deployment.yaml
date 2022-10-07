@@ -27,6 +27,13 @@ spec:
             {{- toYaml .Values.member.securityContext | nindent 12 }}
           image: "{{ .Values.member.image.repository }}:{{ .Values.member.image.tag }}"
           imagePullPolicy: {{ .Values.member.image.pullPolicy }}
+          resources:
+              requests:
+                memory: "600Mi"
+                cpu: "400m"
+              limits:
+                memory: "800Mi"
+                cpu: "600m"
           env:
             - name: ASPNETCORE_URLS
               value: http://*:5000

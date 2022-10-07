@@ -19,4 +19,8 @@ member:
     port: 5081
   
 
-
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  averageCpuUtilization: 90
