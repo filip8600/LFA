@@ -7,16 +7,34 @@ using System.Text;
 namespace LFA
 {
     //Messages for internal use in Project. External messages in "ChargerGatewayMessages.proto"
-    record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
-    record WebSocketCreated(string Identity,WebSocket Ws);
 
+    /// <summary>
+    /// Message from charger to CS
+    /// </summary>
+    /// <param name="Message">WebSocket Meta data</param>
+    /// <param name="Buffer"> payload</param>
+    record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
+    /// <summary>
+    /// Message from controller notfying new connection
+    /// </summary>
+    /// <param name="Identity">Serial number</param>
+    /// <param name="Ws">WebSocket Connection for later messages</param>
+    record WebSocketCreated(string Identity,WebSocket Ws);
+    
+    /// <summary>
+    /// Actor representing 1 charging staion. Can comunicate with a "real" charger using WebSocekt and Central System using a Virtual Actor Grain
+    /// </summary>
     public class ChargerGatewayActor:IActor
     {
         private string identity="uninitializedChargerActor";
         private ChargerGrainClient? virtualGrain;
         private WebSocket? websocket;
 
-
+        /// <summary>
+        /// Switch for handling messages. Runs for each new message in message queue
+        /// </summary>
+        /// <param name="context">Actor system context. Automaticly supplied by system</param>
+        /// <returns></returns>
         public Task ReceiveAsync(IContext context)
         {
             var msg =context.Message;
@@ -41,7 +59,7 @@ namespace LFA
         /// <summary>
         /// Prepare Actor with necesary information. Called by HttpController upon established WS Connection
         /// </summary>
-        /// <param name="word">Custom type with serial-number and WS-connection</param>
+        /// <param name="message">Custom type with serial-number and WS-connection</param>
         /// <param name="context">Actor system context</param>
         private void Setup(WebSocketCreated message, IContext context)
         {
@@ -52,18 +70,26 @@ namespace LFA
             _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pidDto, SerialNumber = identity }, CancellationToken.None); ;
             Console.WriteLine("Virtual Actor Notified of new connection");
         }
-
+        /// <summary>
+        /// Send message from charger to Central System. Startet upon new websocket message arriving to controller
+        /// </summary>
+        /// <param name="message">Record with buffer and ws meta-data</param>
         private async void SendMessage(MessageFromCharger message)
         {
-            ChargerMessages.MessageFromCharger msg =new();
-            msg.Msg = Encoding.Default.GetString(message.Buffer);
-            msg.From = identity;
+            ChargerMessages.MessageFromCharger msg = new()
+            {
+                Msg = Encoding.Default.GetString(message.Buffer),
+                From = identity
+            };
             Console.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
             await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
 
 
         }
-
+        /// <summary>
+        /// Command from CS to charger. Receives command and forwards via Websocket to Charger
+        /// </summary>
+        /// <param name="request">CommandToChargerMessage (exposed public in ChargerGatewayMessages.proto</param>
         public async void CommandToCharger(LFA.CommandToChargerMessage request)
         {
             Console.WriteLine("forwarding command to charger");
