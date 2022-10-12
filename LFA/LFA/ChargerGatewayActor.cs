@@ -8,7 +8,7 @@ namespace LFA
 {
     //Messages for internal use in Project. External messages in "ChargerGatewayMessages.proto"
     record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
-    record WebSocketCreated(string message,WebSocket ws);
+    record WebSocketCreated(string Identity,WebSocket Ws);
 
     public class ChargerGatewayActor:IActor
     {
@@ -43,10 +43,10 @@ namespace LFA
         /// </summary>
         /// <param name="word">Custom type with serial-number and WS-connection</param>
         /// <param name="context">Actor system context</param>
-        private void Setup(WebSocketCreated word, IContext context)
+        private void Setup(WebSocketCreated message, IContext context)
         {
-            websocket = word.ws;
-            identity = word.message;
+            websocket = message.Ws;
+            identity = message.Identity;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
             PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
             _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pidDto, SerialNumber = identity }, CancellationToken.None); ;
