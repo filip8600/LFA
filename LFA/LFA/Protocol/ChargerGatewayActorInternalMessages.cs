@@ -9,11 +9,11 @@ namespace LFA.Protocol
     /// </summary>
     /// <param name="Message">WebSocket Meta data</param>
     /// <param name="Buffer"> payload</param>
-    record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
+    public record MessageFromCharger(WebSocketReceiveResult Message, byte[] Buffer);
     /// <summary>
     /// Message from controller notfying new connection
     /// </summary>
     /// <param name="Identity">Serial number</param>
     /// <param name="Ws">WebSocket Connection for later messages</param>
-    record WebSocketCreated(string Identity, WebSocket Ws);
+    public record WebSocketCreated(string Identity, WebSocket Ws);
 }
