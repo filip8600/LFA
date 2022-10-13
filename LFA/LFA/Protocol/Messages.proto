@@ -18,3 +18,8 @@ message AuthenticationMessage {
 message AuthenticationResponse{
 	bool validated = 1;
 }
+message CommandStatus{
+	string commandUid = 1;
+	bool succeeded = 2;
+	string details = 3;
+}

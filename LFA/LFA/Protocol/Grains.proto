@@ -9,6 +9,8 @@ service ChargerGrain {
   rpc StopCharging (google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc ReceiveMsgFromCharger (MessageFromCharger) returns (google.protobuf.Empty);
   rpc NewWebSocketFromCharger (ChargerActorIdentity) returns (google.protobuf.Empty);
+  rpc CommandReceived (CommandStatus) returns (google.protobuf.Empty);
+
 }
 service AuthGrain {
 	rpc Authenticate (AuthenticationMessage) returns (AuthenticationResponse);

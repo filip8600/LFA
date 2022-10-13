@@ -2,7 +2,9 @@
 using Proto.Cluster;
 
 namespace LFA.ActorSetup;
-
+/// <summary>
+/// Service for use i main - starting and stopping member in actor system
+/// </summary>
 public class ActorSystemClusterHostedService : IHostedService
 {
     private readonly ActorSystem _actorSystem;

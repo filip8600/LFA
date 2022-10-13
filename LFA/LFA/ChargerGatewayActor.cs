@@ -27,7 +27,7 @@ namespace LFA
     public class ChargerGatewayActor:IActor
     {
         private string identity="uninitializedChargerActor";
-        private ChargerGrainClient? virtualGrain;
+        private ChargerGrainClient virtualGrain;
         private WebSocket? websocket;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace LFA
             websocket = message.Ws;
             identity = message.Identity;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
-            PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
+            ProtoMessage.PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
             _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pidDto, SerialNumber = identity }, CancellationToken.None); ;
             Console.WriteLine("Virtual Actor Notified of new connection");
         }
@@ -94,8 +94,25 @@ namespace LFA
         {
             Console.WriteLine("forwarding command to charger");
             byte[] bytes = Encoding.ASCII.GetBytes(request.Payload);
-            await websocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
-            //Todo: return OK to grain
+            var succes = false;
+            var details = "";
+            try
+            {
+                await websocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+                succes = true;
+
+            }
+            catch (Exception e)
+            {
+                details = e.Message;
+            }
+            finally
+            {
+                await virtualGrain.CommandReceived(new CommandStatus { CommandUid = request.CommandUid, Succeeded = succes, Details = details }, CancellationToken.None);
+
+            }
+
+
         }
     }
 }
