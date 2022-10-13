@@ -20,14 +20,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 var webSocketOptions = new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromMinutes(2)
 };
 
 app.UseWebSockets(webSocketOptions);
-//app.UseAuthorization();
 
 app.MapControllers();
 

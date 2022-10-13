@@ -1,8 +1,11 @@
 ﻿using ChargerMessages;
+using LFA.Protocol;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Proto;
 using Proto.Cluster;
+using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.WebSockets;
 
@@ -28,20 +31,24 @@ namespace LFA.Controllers
         {
             if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
-                var response = new ObjectResult("Not a websocket request");
-                response.StatusCode = StatusCodes.Status400BadRequest;
+                var response = new ObjectResult("Not a websocket request")
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
                 return response;
             }
             if (!IsAuthenticated().Result)
             {
-                var response = new ObjectResult("No auth Header - or wrong auth");
-                response.StatusCode = StatusCodes.Status401Unauthorized;
+                var response = new ObjectResult("No auth Header - or wrong auth")
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized
+                };
                 return response;
             }
             using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             if (!HttpContext.Request.Headers.TryGetValue("serial-number", out StringValues identity)) identity = "unknown";
             var pid = actorSystem.Root.SpawnPrefix(chargerProps,identity);
-            Console.WriteLine("Connected to socket with serial-number: " + identity);
+            Debug.WriteLine("Connected to socket with serial-number: " + identity);
             actorSystem.Root.Send(pid, new WebSocketCreated(identity, webSocket));
             await ReceiveMessagesLoop(webSocket, pid);
             return new EmptyResult();
@@ -59,7 +66,7 @@ namespace LFA.Controllers
                                        new ArraySegment<byte>(buffer), CancellationToken.None);
                     if (!receiveResult.CloseStatus.HasValue)
                     {
-                        actorSystem.Root.Send(pid, new MessageFromCharger(receiveResult, buffer));
+                        actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));
                     }
                 } while (!receiveResult.CloseStatus.HasValue);
             }
@@ -88,14 +95,28 @@ namespace LFA.Controllers
             {
                 Credentials = base64Strings[1] // removes "Basic" from authorization
             };
-            var result= await actorSystem.Cluster().GetAuthGrain("auth").Authenticate(authMsg, CancellationToken.None);
-            if (result == null || result.Validated == false)
+            try
             {
-                Console.WriteLine("Actor NOT Validated, cutting connection");
+                var result = await actorSystem.Cluster().GetAuthGrain("auth").Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(1));
+                if (result == null || result.Validated == false)
+                {
+                    Debug.WriteLine("Actor NOT Validated, cutting connection");
+                    return false;
+                }
+                Debug.WriteLine("Actor Validated");
+                return true;
+
+            }
+            catch (TimeoutException e)
+            {
+                Debug.WriteLine("Could not connect to auth grain (Timeout)");
                 return false;
             }
-            Console.WriteLine("Actor Validated");
-            return true;
+            catch (Exception e)
+            {
+                Debug.Print("Could not connect to auth grain");
+                return false;
+            }
         }
     }
 }

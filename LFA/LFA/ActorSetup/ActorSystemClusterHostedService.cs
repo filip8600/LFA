@@ -1,5 +1,6 @@
 ﻿using Proto;
 using Proto.Cluster;
+using System.Diagnostics;
 
 namespace LFA.ActorSetup;
 /// <summary>
@@ -16,7 +17,7 @@ public class ActorSystemClusterHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Console.WriteLine("Starting a cluster member");
+        Debug.WriteLine("Starting a cluster member");
 
         await _actorSystem
             .Cluster()
@@ -25,7 +26,7 @@ public class ActorSystemClusterHostedService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        Console.WriteLine("Shutting down a cluster member");
+        Debug.WriteLine("Shutting down a cluster member");
 
         await _actorSystem
             .Cluster()
