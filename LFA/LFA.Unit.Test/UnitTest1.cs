@@ -60,10 +60,10 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123")));
-
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
+            Thread.Sleep(30);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             await virtualGrain.StartCharging(CancellationToken.None);
-            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
+            Thread.Sleep(30);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal(1, messageReceivedCount);
         }
         public static string messageReceivedContent;
@@ -73,10 +73,11 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123")));
+            Thread.Sleep(20);//Waiting for actor logic, actorsystem traffic, spawning and Grain
 
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
-            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
+            Thread.Sleep(20);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal(messageReceivedContent, "123");
         }
         [Fact]
@@ -85,7 +86,7 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("")));
-
+            Thread.Sleep(40);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
