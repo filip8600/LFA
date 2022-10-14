@@ -27,10 +27,3 @@ jobs:
       run: dotnet build  "LFA/LFA.Unit.Test" --no-restore
     - name: Test
       run: dotnet test "LFA\LFA.Unit.Test" --no-build --verbosity normal
-    - name: Upload dotnet test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: dotnet-results-${{ matrix.dotnet-version }}
-        path: LFA/LFA.Unit.Test/TestResults-${{ matrix.dotnet-version }}
-# Use always() to always run this step to publish test results when there are test failures
-      if: ${{ always() }}
