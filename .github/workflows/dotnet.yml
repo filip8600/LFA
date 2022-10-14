@@ -18,11 +18,15 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore "LFA/LFA"
+    - name: Restore dependencies for test
+      run: dotnet restore "LFA/LFA.Unit.Test"
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build  "LFA/LFA" --no-restore
+    - name: Build Unit Test
+      run: dotnet build  "LFA/LFA.Unit.Test" --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test "LFA\LFA.Unit.Test" --no-build --verbosity normal
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v3
       with:
