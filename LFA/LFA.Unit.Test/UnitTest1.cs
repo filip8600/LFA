@@ -61,9 +61,9 @@ namespace LFA
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123")));
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
-            Thread.Sleep(30);//Waiting for actor logic, actorsystem traffic, spawning and Grain
+            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             await virtualGrain.StartCharging(CancellationToken.None);
-            Thread.Sleep(30);//Waiting for actor logic, actorsystem traffic, spawning and Grain
+            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal(1, messageReceivedCount);
         }
         public static string messageReceivedContent;
