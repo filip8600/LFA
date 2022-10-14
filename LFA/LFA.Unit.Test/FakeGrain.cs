@@ -6,45 +6,46 @@ namespace LFA
 {
     public class FakeGrain : ChargerGrainBase
     {
-        private PID currentChargerGateway;
-        private string identity;
+        private PID? currentChargerGateway;
 
         public FakeGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
         {
         }
 
-        public override async Task CommandReceived(CommandStatus request)
+        public override Task CommandReceived(CommandStatus request)
         {
-            
+            return Task.CompletedTask;
         }
 
-        public override async Task NewWebSocketFromCharger(ChargerActorIdentity request)
+        public override Task NewWebSocketFromCharger(ChargerActorIdentity request)
         {
-            GatewayActorTest.result++;
+            GatewayActorTest.Result++;
             currentChargerGateway = new PID
             {
                 Address = request.Pid.Address,
                 Id = request.Pid.Id
             };
             //currentChargerGateway =request.Pid;
-            identity = request.SerialNumber;
+            return Task.CompletedTask;
         }
 
-        public override async Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
+        public override Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
         {
-            GatewayActorTest.messageReceivedCount++;
-            GatewayActorTest.messageReceivedContent = request.Msg;
+            GatewayActorTest.MessageReceivedCount++;
+            GatewayActorTest.MessageReceivedContent = request.Msg;
+            return Task.CompletedTask;
         }
 
-        public override async Task StartCharging()
+        public override Task StartCharging()
         {
-            Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
-
+            if(currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
+            return Task.CompletedTask;
         }
 
-        public override async Task StopCharging()
+        public override Task StopCharging()
         {
-            Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "", CommandUid = Guid.NewGuid().ToString() });
+            if (currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "", CommandUid = Guid.NewGuid().ToString() });
+            return Task.CompletedTask;
         }
     }
 }

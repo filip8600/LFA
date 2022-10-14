@@ -8,6 +8,7 @@ using LFA.Unit.Test;
 using Proto.Cluster;
 using ChargerMessages;
 using System.Text;
+using System.Net.WebSockets;
 
 namespace LFA
 {
@@ -16,8 +17,9 @@ namespace LFA
         private readonly PID uut;
         private readonly ActorSystem actorSystem;
         private readonly ActorSystemClusterHostedService hs;
-        public static int result = 0;
-        Props chargerProps;
+        private readonly WebSocketReceiveResult message = new(0, new WebSocketMessageType(), true);
+        private static int result = 0;
+        readonly Props chargerProps;
 
         public GatewayActorTest()
         {
@@ -33,64 +35,69 @@ namespace LFA
 
         //Connecting
         [Fact]
-        public async void CsIsNotified()
+        public void CsIsNotified()
         {
-            result = 0;
+            Result = 0;
             actorSystem.Root.Send(uut, new WebSocketCreated("123", new WS()));
             Thread.Sleep(50);//Waiting for actor logic, actorsystem traffic and Grain
-            Assert.Equal(1, result);
+            Assert.Equal(1, Result);
         }
 
         [Fact]
-        public async void DuplicateCreate()
+        public void DuplicateCreate()
         {
-            result = 0;
+            Result = 0;
             actorSystem.Root.Send(uut, new WebSocketCreated("123", new WS()));
             var pid = actorSystem.Root.SpawnPrefix(chargerProps, "testActor");
             actorSystem.Root.Send(pid, new WebSocketCreated("123", new WS()));
 
             Thread.Sleep(70);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(2, result);
+            Assert.Equal(2, Result);
         }
         //Messages
-        public static int messageReceivedCount = 0;
+        private static int messageReceivedCount = 0;
         [Fact]
         public async void MessageIsForwarded()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
-            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123")));
+            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("123")));
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             Thread.Sleep(80);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(80);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(1, messageReceivedCount);
+            Assert.Equal(1, MessageReceivedCount);
         }
-        public static string messageReceivedContent;
+        private static string? messageReceivedContent;
+
+        public static int Result { get => result; set => result = value; }
+        public static int MessageReceivedCount { get => messageReceivedCount; set => messageReceivedCount = value; }
+        public static string? MessageReceivedContent { get => messageReceivedContent; set => messageReceivedContent = value; }
+
         [Fact]
         public async void MessageIsForwardedCorrect()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
-            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123")));
+            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("123")));
             Thread.Sleep(20);//Waiting for actor logic, actorsystem traffic, spawning and Grain
 
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(20);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(messageReceivedContent, "123");
+            Assert.Equal("123", MessageReceivedContent);
         }
         [Fact]
         public async void EmptyMessageIsForwardedCorrect()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
-            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("")));
+            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("")));
             Thread.Sleep(40);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(messageReceivedContent, "");
+            Assert.Equal("",MessageReceivedContent);
         }
         [Fact]
         public async void LongMessageIsForwardedCorrect()
@@ -98,12 +105,12 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             var str = "8792rcyn348975y39478y5cnn0tn03978ctyn93748yctn35ctn89t5y598c7tynt9g54c3gæc546hæc54h5øchcæ6hæ54c5ø hlk65ifhiu34fhc34y t3g3  2 26945 t349823 g3yfg 38f gryfg2 9yr fg8yf g r328yfg2fyugeudfgeruofy3gr f";
-            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes(str)));
+            actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes(str)));
 
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(messageReceivedContent, str);
+            Assert.Equal(str,MessageReceivedContent);
         }
         //Commands
         [Fact]
@@ -114,7 +121,7 @@ namespace LFA
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(40);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(ws.SendAsyncCalled, 1);
+            Assert.Equal(1,ws.SendAsyncCalled);
         }
         [Fact]
         public async void CommandIsForwardedCorrect()
@@ -140,7 +147,7 @@ namespace LFA
         }
         //Kill
         [Fact]
-        public async void KilledActorCantRespond()
+        public void KilledActorCantRespond()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
@@ -149,24 +156,25 @@ namespace LFA
             Assert.ThrowsAsync<NullReferenceException>(() => virtualGrain.StartCharging(CancellationToken.None));
         }
         [Fact]
-        public async void WorkIsFinishedBeforeKill()
+        public void WorkIsFinishedBeforeKill()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             for (int i = 0; i < 15; i++)
             {
-                actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(null, Encoding.Default.GetBytes("123#" + i)));
+                actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("123#" + i)));
             }
             actorSystem.Root.Poison(uut);
             Thread.Sleep(300);
-            Assert.Equal(15, messageReceivedCount);
+            Assert.Equal(15, MessageReceivedCount);
         }
 
         public void Dispose()
         {
             actorSystem.ShutdownAsync("Test Complete");
-            messageReceivedCount = 0;
-            hs.StopAsync(CancellationToken.None);
+            MessageReceivedCount = 0;
+            _ = hs.StopAsync(CancellationToken.None);
+            GC.SuppressFinalize(this);//Suggested by warning
         }
     }
 }

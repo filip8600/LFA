@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="Protocol\ChargerGatewayMessages.proto" />
   </ItemGroup>
 
