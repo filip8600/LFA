@@ -122,6 +122,7 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
+            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal("Turn on, please :)", Encoding.Default.GetString(ws.sentData));
@@ -132,6 +133,7 @@ namespace LFA
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             var virtualGrain = actorSystem.Cluster().GetChargerGrain("123");
+            Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             await virtualGrain.StopCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal("", Encoding.Default.GetString(ws.sentData));
