@@ -1,4 +1,4 @@
-﻿using Proto;
+﻿    using Proto;
 using ChargerMessages;
 using Proto.Cluster;
 
@@ -6,33 +6,45 @@ namespace LFA
 {
     public class FakeGrain : ChargerGrainBase
     {
+        private PID currentChargerGateway;
+        private string identity;
+
         public FakeGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
         {
         }
 
-        public override Task CommandReceived(CommandStatus request)
+        public override async Task CommandReceived(CommandStatus request)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override async Task NewWebSocketFromCharger(ChargerActorIdentity request)
         {
             GatewayActorTest.result++;
+            currentChargerGateway = new PID
+            {
+                Address = request.Pid.Address,
+                Id = request.Pid.Id
+            };
+            //currentChargerGateway =request.Pid;
+            identity = request.SerialNumber;
         }
 
-        public override Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
+        public override async Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
         {
-            throw new NotImplementedException();
+            GatewayActorTest.messageReceivedCount++;
+            GatewayActorTest.messageReceivedContent = request.Msg;
         }
 
-        public override Task StartCharging()
+        public override async Task StartCharging()
         {
-            throw new NotImplementedException();
+            Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
+
         }
 
-        public override Task StopCharging()
+        public override async Task StopCharging()
         {
-            throw new NotImplementedException();
+            Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "", CommandUid = Guid.NewGuid().ToString() });
         }
     }
 }
