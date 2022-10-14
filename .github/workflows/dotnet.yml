@@ -26,7 +26,7 @@ jobs:
     - name: Build Unit Test
       run: dotnet build  "LFA/LFA.Unit.Test" --no-restore
     - name: Test
-      run: dotnet test "LFA\LFA.Unit.Test\" --no-build --verbosity normal
+      run: dotnet test "LFA\LFA.Unit.Test" --no-build --verbosity normal
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v3
       with:
