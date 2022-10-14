@@ -1,7 +1,9 @@
 # LFA
 *Ladestander Forbindelses Agent*
 
-En IT-løsning der muliggør forbindelse til adskillige elbils-ladestandere med WebSocket-forbindelser. Systemet er designet med et actor system "Proto.Actor". Løsningen er designet til at kommunikere med et Centralt Backend system (CS).
+[![.NET](https://github.com/filip8600/LFA/actions/workflows/dotnet.yml/badge.svg)](https://github.com/filip8600/LFA/actions/workflows/dotnet.yml)
+
+Muliggør forbindelse til adskillige elbils-ladestandere med WebSocket-forbindelser. Systemet er designet med et actor system "Proto.Actor". Løsningen er designet til at kommunikere med et Centralt Backend system (CS).
 Se og hent CSSimulator her: https://github.com/LauritsHG/CSSimulator
 
 
