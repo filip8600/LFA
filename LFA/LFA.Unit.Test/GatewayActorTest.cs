@@ -1,8 +1,6 @@
-
 using LFA.ActorSetup;
 using LFA.Protocol;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Proto;
 using LFA.Unit.Test;
 using Proto.Cluster;
@@ -23,8 +21,6 @@ namespace LFA
 
         public GatewayActorTest()
         {
-            var builder = WebApplication.CreateBuilder();
-            //builder.SeActorSystemConfigurationTestrvices.AddTestActorSystem();
             actorSystem = ActorSystemConfigurationTest.CreateActorSystem();
             hs = new ActorSystemClusterHostedService(actorSystem);
             _ = hs.StartAsync(CancellationToken.None);
@@ -44,7 +40,7 @@ namespace LFA
         }
 
         [Fact]
-        public void DuplicateCreate()
+        public void DuplicateActorIsCreated()
         {
             Result = 0;
             actorSystem.Root.Send(uut, new WebSocketCreated("123", new WS()));
@@ -57,7 +53,7 @@ namespace LFA
         //Messages
         private static int messageReceivedCount = 0;
         [Fact]
-        public async void MessageIsForwarded()
+        public async void MessageIsForwardedToGrain()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
@@ -75,7 +71,7 @@ namespace LFA
         public static string? MessageReceivedContent { get => messageReceivedContent; set => messageReceivedContent = value; }
 
         [Fact]
-        public async void MessageIsForwardedCorrect()
+        public async void MessageContentIsForwardedCorrect()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));

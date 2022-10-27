@@ -107,14 +107,14 @@ namespace LFA.Controllers
                 return true;
 
             }
-            catch (TimeoutException e)
+            catch (TimeoutException)
             {
                 Debug.WriteLine("Could not connect to auth grain (Timeout)");
                 return false;
             }
             catch (Exception e)
             {
-                Debug.Print("Could not connect to auth grain");
+                Debug.Print("Could not connect to auth grain"+e);
                 return false;
             }
         }
