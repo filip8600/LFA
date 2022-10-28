@@ -5,9 +5,14 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LFA", "LFA\LFA.csproj", "{56862FCD-1F21-42EF-8E00-9534B3E58A34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LFA.Unit.Test", "LFA.Unit.Test\LFA.Unit.Test.csproj", "{1C9EFE15-182E-433A-942C-D9136EA5B472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LFA.Unit.Test", "LFA.Unit.Test\LFA.Unit.Test.csproj", "{1C9EFE15-182E-433A-942C-D9136EA5B472}"
 	ProjectSection(ProjectDependencies) = postProject
 		{56862FCD-1F21-42EF-8E00-9534B3E58A34} = {56862FCD-1F21-42EF-8E00-9534B3E58A34}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0FF19B35-6A04-4CEF-B7BB-B3A0F8CCC267}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Global

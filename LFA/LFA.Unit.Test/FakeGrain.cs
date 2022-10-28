@@ -1,4 +1,4 @@
-﻿using Proto;
+﻿    using Proto;
 using ChargerMessages;
 using Proto.Cluster;
 
@@ -6,33 +6,46 @@ namespace LFA
 {
     public class FakeGrain : ChargerGrainBase
     {
+        private PID? currentChargerGateway;
+
         public FakeGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
         {
         }
 
         public override Task CommandReceived(CommandStatus request)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
-        public override async Task NewWebSocketFromCharger(ChargerActorIdentity request)
+        public override Task NewWebSocketFromCharger(ChargerActorIdentity request)
         {
-            GatewayActorTest.result++;
+            GatewayActorTest.Result++;
+            currentChargerGateway = new PID
+            {
+                Address = request.Pid.Address,
+                Id = request.Pid.Id
+            };
+            //currentChargerGateway =request.Pid;
+            return Task.CompletedTask;
         }
 
         public override Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
         {
-            throw new NotImplementedException();
+            GatewayActorTest.MessageReceivedCount++;
+            GatewayActorTest.MessageReceivedContent = request.Msg;
+            return Task.CompletedTask;
         }
 
         public override Task StartCharging()
         {
-            throw new NotImplementedException();
+            if(currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
+            return Task.CompletedTask;
         }
 
         public override Task StopCharging()
         {
-            throw new NotImplementedException();
+            if (currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "", CommandUid = Guid.NewGuid().ToString() });
+            return Task.CompletedTask;
         }
     }
 }

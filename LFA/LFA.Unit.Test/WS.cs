@@ -4,6 +4,9 @@ namespace LFA
 {
     public class WS : WebSocket
     {
+        public int SendAsyncCalled = 0;
+        public ArraySegment<byte> sentData;
+
         public override WebSocketCloseStatus? CloseStatus => throw new NotImplementedException();
 
         public override string? CloseStatusDescription => throw new NotImplementedException();
@@ -37,9 +40,12 @@ namespace LFA
             throw new NotImplementedException();
         }
 
-        public override Task SendAsync(ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+        public override async Task SendAsync(ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
+        { 
+            SendAsyncCalled++;
+            sentData = buffer;
+            await Task.Delay(0);//Fix warning about async/await
+
         }
     }
 }
