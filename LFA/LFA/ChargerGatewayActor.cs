@@ -41,6 +41,10 @@ namespace LFA
                 case MessageFromCharger message:
                     SendMessage(message);
                     break;
+                case Stopped message:
+                    MessageFromCharger newMessage = new(null,Encoding.ASCII.GetBytes("Offline"));
+                    SendMessage(newMessage);
+                    break;
                 default:
                     break;
             }
@@ -85,7 +89,7 @@ namespace LFA
             Debug.WriteLine("forwarding command to charger");
             byte[] bytes = Encoding.ASCII.GetBytes(request.Payload);
             var succes = false;
-            var details = "";
+            var details = "Command received";
             try
             {
                 await websocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);

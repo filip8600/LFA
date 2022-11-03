@@ -150,9 +150,9 @@ namespace LFA
             {
                 actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("123#" + i)));
             }
-            actorSystem.Root.Poison(uut);
+            actorSystem.Root.Poison(uut); // Also sends message
             Thread.Sleep(300);
-            Assert.Equal(15, MessageReceivedCount);
+            Assert.Equal(16, MessageReceivedCount);
         }
 
         public void Dispose()
