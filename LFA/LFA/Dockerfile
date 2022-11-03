@@ -5,7 +5,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS builder
 
 WORKDIR /app/src
-EXPOSE 80
+EXPOSE 5000
+ENV ASPNETCORE_URLS=http://*:5000
 
 # Restore
 COPY *.csproj .
