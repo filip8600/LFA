@@ -51,4 +51,4 @@ jobs:
                 cluster-name: ${{ env.CLUSTER_NAME }}
                 resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
             - name: Deploy application
-              run: helm upgrade --wait -i -f ${{ env.CHART_OVERRIDE_PATH }}  automated-deployment ${{ env.CHART_PATH }}
+              run: helm upgrade --wait -i -f ${{ env.CHART_OVERRIDE_PATH }}  lfa ${{ env.CHART_PATH }}
