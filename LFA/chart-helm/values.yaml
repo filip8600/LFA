@@ -3,7 +3,7 @@ member:
 
   image:
     repository: filip8600/lfa
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
 
   podAnnotations: {}
@@ -16,8 +16,7 @@ member:
 
   service:
     type: ClusterIP
-    port: 5081
-  
+    port: 5000
 
 hpa:
   enabled: true

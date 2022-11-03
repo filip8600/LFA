@@ -45,3 +45,6 @@ spec:
             - name: http
               containerPort: 5000
               protocol: TCP
+            - name: https
+              containerPort: 5001
+              protocol: TCP
