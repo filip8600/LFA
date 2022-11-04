@@ -29,6 +29,8 @@ namespace LFA.Controllers
         [HttpGet("/ws")]
         public async Task<IActionResult> GetAsync()
         {
+            Debug.WriteLine("conncection attempt");
+
             if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
                 var response = new ObjectResult("Not a websocket request")
