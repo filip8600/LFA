@@ -19,6 +19,7 @@ namespace LFA
         private string identity="uninitializedChargerActor";
         private ChargerGrainClient virtualGrain;
         private WebSocket? websocket;
+        private ProtoMessage.PID pid;
 
         /// <summary>
         /// Switch for handling messages. Runs for each new message in message queue
@@ -61,7 +62,17 @@ namespace LFA
             identity = message.Identity;
             virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
             ProtoMessage.PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
+            pid = pidDto;
             _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pidDto, SerialNumber = identity }, CancellationToken.None); ;
+            Debug.WriteLine("Virtual Actor Notified of new connection");
+        }
+        private void resendSetup()
+        {
+            //websocket = message.Ws;
+            //identity = message.Identity;
+            //virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
+            //ProtoMessage.PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
+            _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pid, SerialNumber = identity }, CancellationToken.None); ;
             Debug.WriteLine("Virtual Actor Notified of new connection");
         }
         /// <summary>
@@ -76,8 +87,14 @@ namespace LFA
                 From = identity
             };
             Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
-            await virtualGrain.ReceiveMsgFromCharger(msg,CancellationToken.None);
+            var resp = await virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
+            
+            if (resp == null || resp.Validated == false)
+            {
+                Console.WriteLine("Resent Setup");
+                resendSetup();
 
+            }
 
         }
         /// <summary>

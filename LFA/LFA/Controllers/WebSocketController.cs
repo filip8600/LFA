@@ -37,7 +37,8 @@ namespace LFA.Controllers
                 };
                 return response;
             }
-            if (!IsAuthenticated().Result)
+            var authResult = await IsAuthenticated();//.WaitAsync(TimeSpan.FromSeconds(300));
+            if (authResult == false)
             {
                 var response = new ObjectResult("No auth Header - or wrong auth")
                 {
@@ -47,6 +48,7 @@ namespace LFA.Controllers
             }
             using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             if (!HttpContext.Request.Headers.TryGetValue("serial-number", out StringValues identity)) identity = "unknown";
+            if (HttpContext.Request.QueryString.Value != "") identity = HttpContext.Request.QueryString.Value;
             var pid = actorSystem.Root.SpawnPrefix(chargerProps,identity);
             Debug.WriteLine("Connected to socket with serial-number: " + identity);
             actorSystem.Root.Send(pid, new WebSocketCreated(identity, webSocket));
