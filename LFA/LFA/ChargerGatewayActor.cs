@@ -87,14 +87,14 @@ namespace LFA
                 From = identity
             };
             Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
-            var resp = await virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
-            
-            if (resp == null || resp.Validated == false)
-            {
-                Console.WriteLine("Resent Setup");
-                resendSetup();
+            virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
+            //resendSetup();
+            //if (resp == null || resp.Validated == false)
+            //{
+            //    Console.WriteLine("Resent Setup");
+            //    resendSetup();
 
-            }
+            //}
 
         }
         /// <summary>
