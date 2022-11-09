@@ -29,11 +29,15 @@ namespace LFA
             return Task.CompletedTask;
         }
 
-        public override Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
+        public override async Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
         {
             GatewayActorTest.MessageReceivedCount++;
+            if (request.Msg == null || request.Msg.Length < 1) GatewayActorTest.MessageReceivedContent = "";
             GatewayActorTest.MessageReceivedContent = request.Msg;
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
+            //AuthenticationResponse resp = new();
+            //resp.Validated = true;
+            //return resp;
         }
 
         public override Task StartCharging()

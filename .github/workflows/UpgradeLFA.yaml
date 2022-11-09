@@ -1,4 +1,4 @@
-name: UpgradeLFA
+name: Build image and deploy to Azure
 "on":
     push:
         branches:
@@ -7,7 +7,7 @@ name: UpgradeLFA
 env:
     ACR_RESOURCE_GROUP: Bachelor
     AZURE_CONTAINER_REGISTRY: acrworkflow1667468595927
-    CHART_OVERRIDE_PATH: ./LFA/chart-helm/values.yaml
+    CHART_OVERRIDE_PATH: ./LFA/chart-helm/valuesazure.yaml
     CHART_OVERRIDES: ""
     CHART_PATH: ./LFA/chart-helm
     CLUSTER_NAME: LFA
@@ -51,4 +51,4 @@ jobs:
                 cluster-name: ${{ env.CLUSTER_NAME }}
                 resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
             - name: Deploy application
-              run: helm upgrade --wait -i -f ${{ env.CHART_OVERRIDE_PATH }}  lfa ${{ env.CHART_PATH }}
+              run: helm upgrade --wait -i -f ${{ env.CHART_OVERRIDE_PATH }}  lfa ${{ env.CHART_PATH }} --set=member.image.tag=${{ github.sha }}
