@@ -17,7 +17,7 @@ namespace LFA.Controllers
     {
         private readonly ActorSystem actorSystem;
         private readonly Props chargerProps;
-
+        int authCount = 0;
 
         public WebSocketController(ActorSystem actorSystem)
         {
@@ -50,7 +50,7 @@ namespace LFA.Controllers
             }
             using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             if (!HttpContext.Request.Headers.TryGetValue("serial-number", out StringValues identity)) identity = "unknown";
-            if (HttpContext.Request.QueryString.Value != "") identity = HttpContext.Request.QueryString.Value;
+            if (HttpContext.Request.QueryString.Value != "") identity = HttpContext.Request.QueryString.Value[1..HttpContext.Request.QueryString.Value.Length];
             var pid = actorSystem.Root.SpawnPrefix(chargerProps,identity);
             Debug.WriteLine("Connected to socket with serial-number: " + identity);
             actorSystem.Root.Send(pid, new WebSocketCreated(identity, webSocket));
@@ -101,7 +101,9 @@ namespace LFA.Controllers
             };
             try
             {
-                var result = await actorSystem.Cluster().GetAuthGrain("auth").Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(1));
+                authCount++;
+                if (authCount >= 1000) authCount = 0; 
+                var result = await actorSystem.Cluster().GetAuthGrain("auth"+authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(30));
                 if (result == null || result.Validated == false)
                 {
                     Debug.WriteLine("Actor NOT Validated, cutting connection");
