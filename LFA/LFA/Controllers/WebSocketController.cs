@@ -102,7 +102,7 @@ namespace LFA.Controllers
             try
             {
                 authCount++;
-                if (authCount >= 1000) authCount = 0; 
+                if (authCount >= 10) authCount = 0; 
                 var result = await actorSystem.Cluster().GetAuthGrain("auth"+authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
                 if (result == null || result.Validated == false)
                 {
