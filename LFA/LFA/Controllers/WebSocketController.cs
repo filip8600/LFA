@@ -39,7 +39,7 @@ namespace LFA.Controllers
                 };
                 return response;
             }
-            var authResult = await IsAuthenticated();//.WaitAsync(TimeSpan.FromSeconds(300));
+            var authResult = await IsAuthenticated().WaitAsync(TimeSpan.FromSeconds(300));
             if (authResult == false)
             {
                 var response = new ObjectResult("No auth Header - or wrong auth")
@@ -67,7 +67,7 @@ namespace LFA.Controllers
                 {
                     var buffer = new byte[1024 * 4];
                     receiveResult = await webSocket.ReceiveAsync(
-                                       new ArraySegment<byte>(buffer), CancellationToken.None);
+                                       new ArraySegment<byte>(buffer), CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
                     if (!receiveResult.CloseStatus.HasValue)
                     {
                         actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));
@@ -103,7 +103,7 @@ namespace LFA.Controllers
             {
                 authCount++;
                 if (authCount >= 1000) authCount = 0; 
-                var result = await actorSystem.Cluster().GetAuthGrain("auth"+authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(30));
+                var result = await actorSystem.Cluster().GetAuthGrain("auth"+authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
                 if (result == null || result.Validated == false)
                 {
                     Debug.WriteLine("Actor NOT Validated, cutting connection");
