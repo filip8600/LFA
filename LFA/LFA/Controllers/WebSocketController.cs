@@ -39,7 +39,7 @@ namespace LFA.Controllers
                 };
                 return response;
             }
-            var authResult = await IsAuthenticated().WaitAsync(TimeSpan.FromSeconds(300));
+            var authResult = await IsAuthenticated();
             if (authResult == false)
             {
                 var response = new ObjectResult("No auth Header - or wrong auth")
@@ -67,7 +67,7 @@ namespace LFA.Controllers
                 {
                     var buffer = new byte[1024 * 4];
                     receiveResult = await webSocket.ReceiveAsync(
-                                       new ArraySegment<byte>(buffer), CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
+                                       new ArraySegment<byte>(buffer), CancellationToken.None);
                     if (!receiveResult.CloseStatus.HasValue)
                     {
                         actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));
@@ -79,6 +79,11 @@ namespace LFA.Controllers
                 webSocket.Abort();
                 webSocket.Dispose();
 
+            }
+            catch (TimeoutException)
+            {
+                webSocket.Abort();
+                webSocket.Dispose();
             }
             finally
             {
