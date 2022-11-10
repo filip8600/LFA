@@ -19,7 +19,7 @@ public static class ActorSystemConfiguration
             // actor system configuration
 
             var actorSystemConfig = ActorSystemConfig
-                .Setup();
+                .Setup().WithActorRequestTimeout(TimeSpan.FromMinutes(60)); ;
 
             // remote configuration
 
@@ -34,7 +34,11 @@ public static class ActorSystemConfiguration
                     clusterName: "CSSimulatorCluster",
                     clusterProvider: new KubernetesProvider(),
                     identityLookup: new PartitionIdentityLookup()
-                );
+                ).WithGossipRequestTimeout(TimeSpan.FromMinutes(60))
+                .WithTimeout(TimeSpan.FromMinutes(60))
+                .WithActorSpawnTimeout(TimeSpan.FromMinutes(60))
+                .WithActorRequestTimeout(TimeSpan.FromMinutes(60))
+                .WithActorActivationTimeout(TimeSpan.FromMinutes(60));
 
             // create the actor system
 
