@@ -79,13 +79,14 @@ namespace LFA
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal("123", MessageReceivedContent);
         }
+
         [Fact]
         public void EmptyMessageIsForwardedCorrect()
         {
             var ws = new WS();
             actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("")));
-            Thread.Sleep(100);//Waiting for actor logic, actorsystem traffic, spawning and Grain
+            Thread.Sleep(120);//Waiting for actor logic, actorsystem traffic, spawning and Grain
             Assert.Equal("",MessageReceivedContent);
         }
         [Fact]

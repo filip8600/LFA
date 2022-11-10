@@ -1,0 +1,25 @@
+member:
+  replicaCount: 1
+
+  image:
+    repository: acrworkflow1667468595927.azurecr.io/image-workflow-1667468595927
+    pullPolicy: Always
+    tag: "always.replace.me"
+
+  podAnnotations: {}
+
+  podSecurityContext:
+    runAsUser: 101
+
+  securityContext:
+    allowPrivilegeEscalation: false
+
+  service:
+    type: ClusterIP
+    port: 5000
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  averageCpuUtilization: 90

@@ -32,6 +32,7 @@ namespace LFA
         public override async Task ReceiveMsgFromCharger(ChargerMessages.MessageFromCharger request)
         {
             GatewayActorTest.MessageReceivedCount++;
+            if (request.Msg == null || request.Msg.Length < 1) GatewayActorTest.MessageReceivedContent = "";
             GatewayActorTest.MessageReceivedContent = request.Msg;
             //return Task.CompletedTask;
             //AuthenticationResponse resp = new();
