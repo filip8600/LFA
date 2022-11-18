@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Proto;
 using Proto.Cluster;
-using System;
 using System.Diagnostics;
-using System.Net;
 using System.Net.WebSockets;
 
 namespace LFA.Controllers
@@ -70,7 +68,7 @@ namespace LFA.Controllers
                                        new ArraySegment<byte>(buffer), CancellationToken.None);
                     if (!receiveResult.CloseStatus.HasValue)
                     {
-                        actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));
+                            actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));   
                     }
                 } while (!receiveResult.CloseStatus.HasValue);
             }
@@ -89,6 +87,7 @@ namespace LFA.Controllers
             {
                 //luk actor
                 actorSystem.Root.Poison(pid);
+                Debug.WriteLine("Killed actor with pid: " +pid);
             }
         }
 

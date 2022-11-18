@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 var webSocketOptions = new WebSocketOptions
 {
-    KeepAliveInterval = TimeSpan.FromMinutes(2)
+    KeepAliveInterval = TimeSpan.FromMinutes(1)
 };
 
 app.UseWebSockets(webSocketOptions);

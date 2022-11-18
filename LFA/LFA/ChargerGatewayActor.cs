@@ -36,6 +36,9 @@ namespace LFA
                 case WebSocketCreated message:
                     Setup(message, context);
                     break;
+                case ResendSetup message:
+                    resendSetup();
+                    break;
                 case CommandToChargerMessage command:
                     CommandToCharger(command);
                     break;
@@ -68,12 +71,8 @@ namespace LFA
         }
         private void resendSetup()
         {
-            //websocket = message.Ws;
-            //identity = message.Identity;
-            //virtualGrain = context.System.Cluster().GetChargerGrain(identity: identity);
-            //ProtoMessage.PID pidDto = new() { Id = context.Self.Id, Address = context.Self.Address };
             _ = virtualGrain.NewWebSocketFromCharger(new ChargerActorIdentity { Pid = pid, SerialNumber = identity }, CancellationToken.None); ;
-            Debug.WriteLine("Virtual Actor Notified of new connection");
+            Debug.WriteLine("Virtual Actor Renotified of connection");
         }
         /// <summary>
         /// Send message from charger to Central System. Startet upon new websocket message arriving to controller
@@ -81,20 +80,15 @@ namespace LFA
         /// <param name="message">Record with buffer and ws meta-data</param>
         private async void SendMessage(MessageFromCharger message)
         {
+            string ChargerMessage = Encoding.Default.GetString(message.Buffer);
             ChargerMessages.MessageFromCharger msg = new()
             {
-                Msg = Encoding.Default.GetString(message.Buffer),
-                From = identity
-            };
-            Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
-            virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
-            //resendSetup();
-            //if (resp == null || resp.Validated == false)
-            //{
-            //    Console.WriteLine("Resent Setup");
-            //    resendSetup();
-
-            //}
+                Msg = ChargerMessage,
+                From = identity,
+                Pid = pid
+                };
+                Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
+                virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
 
         }
         /// <summary>
