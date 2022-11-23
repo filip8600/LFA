@@ -36,7 +36,7 @@ spec:
                 cpu: "600m"
           env:
             - name: ASPNETCORE_URLS
-              value: http://*:5000
+              value: "http://*:5000;http://*:5001;http://*:5002"
             - name: ProtoActor__AdvertisedHost
               valueFrom:
                 fieldRef:
@@ -45,6 +45,9 @@ spec:
             - name: http
               containerPort: 5000
               protocol: TCP
-            - name: https
+            - name: http1
               containerPort: 5001
+              protocol: TCP
+            - name: http2
+              containerPort: 5002
               protocol: TCP

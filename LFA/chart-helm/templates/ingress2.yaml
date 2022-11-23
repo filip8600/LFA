@@ -1,0 +1,50 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lfa-ingress
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+#  ingressClassName: nginx
+  rules:
+  - host: lfa2.96064fddcffb4f8fb419.northeurope.aksapp.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: lfa
+            port: 
+              number: 5002
+  - host: lfa3.96064fddcffb4f8fb419.northeurope.aksapp.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: lfa
+            port: 
+              number: 5001
+  - host: lfa4.96064fddcffb4f8fb419.northeurope.aksapp.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: lfa
+            port: 
+              number: 5000
+  - host: cs.96064fddcffb4f8fb419.northeurope.aksapp.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: cssimulator
+            port: 
+              number: 5000

@@ -6,8 +6,16 @@ spec:
   type: {{ .Values.member.service.type }}
   ports:
     - port: {{ .Values.member.service.port }}
-      targetPort: http
+      targetPort: 5000
       protocol: TCP
       name: http
+    - port: 5001
+      targetPort: 5001
+      protocol: TCP
+      name: http1
+    - port: 5002
+      targetPort: 5002
+      protocol: TCP
+      name: http2
   selector:
     app: {{ .Release.Name }}

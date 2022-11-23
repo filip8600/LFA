@@ -2,7 +2,7 @@
 
 namespace LFA
 {
-    public class WS : WebSocket
+    public class FakeWebSocket : WebSocket
     {
         public int SendAsyncCalled = 0;
         public ArraySegment<byte> sentData;

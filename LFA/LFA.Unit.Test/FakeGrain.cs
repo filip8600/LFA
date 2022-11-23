@@ -1,6 +1,7 @@
 ﻿    using Proto;
 using ChargerMessages;
 using Proto.Cluster;
+using Microsoft.Extensions.Hosting;
 
 namespace LFA
 {
@@ -11,6 +12,9 @@ namespace LFA
         public FakeGrain(IContext context, ClusterIdentity clusterIdentity) : base(context)
         {
         }
+
+
+
 
         public override Task CommandReceived(CommandStatus request)
         {
@@ -25,7 +29,6 @@ namespace LFA
                 Address = request.Pid.Address,
                 Id = request.Pid.Id
             };
-            //currentChargerGateway =request.Pid;
             return Task.CompletedTask;
         }
 
@@ -34,10 +37,6 @@ namespace LFA
             GatewayActorTest.MessageReceivedCount++;
             if (request.Msg == null || request.Msg.Length < 1) GatewayActorTest.MessageReceivedContent = "";
             GatewayActorTest.MessageReceivedContent = request.Msg;
-            //return Task.CompletedTask;
-            //AuthenticationResponse resp = new();
-            //resp.Validated = true;
-            //return resp;
         }
 
         public override Task StartCharging()

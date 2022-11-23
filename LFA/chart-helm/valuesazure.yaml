@@ -18,6 +18,7 @@ member:
     type: ClusterIP
     port: 5000
 
+
 hpa:
   enabled: true
   minReplicas: 2
