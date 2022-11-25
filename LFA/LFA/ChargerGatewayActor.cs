@@ -50,6 +50,7 @@ namespace LFA
                     SendMessage(newMessage);
                     break;
                 default:
+                    throw new InvalidOperationException("This code is not supposed to be reached. An actor probably received a message it could not process.");
                     break;
             }
             return Task.CompletedTask;
