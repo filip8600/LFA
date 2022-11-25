@@ -13,9 +13,6 @@ namespace LFA
         {
         }
 
-
-
-
         public override Task CommandReceived(CommandStatus request)
         {
             return Task.CompletedTask;

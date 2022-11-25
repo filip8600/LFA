@@ -1,6 +1,5 @@
 member:
-  replicaCount: 1
-
+  replicaCount: 2
   image:
     repository: acrworkflow1667468595927.azurecr.io/image-workflow-1667468595927
     pullPolicy: Always

@@ -1,4 +1,4 @@
-
+#Derived from https://learn.microsoft.com/en-us/azure/aks/http-application-routing
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,7 +6,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
-#  ingressClassName: nginx
   rules:
   - host: lfa2.96064fddcffb4f8fb419.northeurope.aksapp.io
     http:

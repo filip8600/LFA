@@ -129,7 +129,6 @@ namespace LFA
         [Fact]
         public void WorkIsFinishedBeforeKill()
         {
-            actorSystem.Root.Send(uut, new WebSocketCreated("123", ws));
             for (int i = 0; i < 15; i++)
             {
                 actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("123#" + i)));
