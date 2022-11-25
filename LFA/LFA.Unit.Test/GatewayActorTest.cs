@@ -17,12 +17,12 @@ namespace LFA
         private readonly ActorSystem actorSystem;
         private readonly ActorSystemClusterHostedService hs;
         private readonly WebSocketReceiveResult message = new(0, new WebSocketMessageType(), true);
-        private static int result = 0;
+        private static int resultFromExternalDependency = 0;
         readonly Props chargerProps;
         private static string? messageReceivedContent;
         private ChargerGrainClient virtualGrain;
 
-        public static int Result { get => result; set => result = value; }
+        public static int Result { get => resultFromExternalDependency; set => resultFromExternalDependency = value; }
         public static int MessageReceivedCount { get => messageReceivedCount; set => messageReceivedCount = value; }
         public static string? MessageReceivedContent { get => messageReceivedContent; set => messageReceivedContent = value; }
 
@@ -139,6 +139,7 @@ namespace LFA
 
         public void Dispose()
         {
+            resultFromExternalDependency = 0;
             actorSystem.ShutdownAsync("Test Complete");
             MessageReceivedCount = 0;
             _ = hs.StopAsync(CancellationToken.None);
