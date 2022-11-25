@@ -51,7 +51,6 @@ namespace LFA
         [Fact]
         public void DuplicateActorIsCreated()
         {
-            //Result = 0;
             var pid = actorSystem.Root.SpawnPrefix(chargerProps, "testActor");
             actorSystem.Root.Send(pid, new WebSocketCreated("123", new FakeWebSocket()));
 
