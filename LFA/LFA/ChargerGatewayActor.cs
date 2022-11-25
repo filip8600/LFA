@@ -49,6 +49,8 @@ namespace LFA
                     MessageFromCharger newMessage = new(null,Encoding.ASCII.GetBytes("Offline"));
                     SendMessage(newMessage);
                     break;
+                case Stopping message:
+                    break;
                 default:
                     throw new InvalidOperationException("This code is not supposed to be reached. An actor probably received a message it could not process.");
                     break;
