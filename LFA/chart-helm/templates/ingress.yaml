@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
-  - host: lfa2.96064fddcffb4f8fb419.northeurope.aksapp.io
+  - host: lfa2.134203787e9d4f5a9c5c.northeurope.aksapp.io
     http:
       paths:
       - path: /
@@ -17,7 +17,7 @@ spec:
             name: lfa
             port: 
               number: 5002
-  - host: lfa3.96064fddcffb4f8fb419.northeurope.aksapp.io
+  - host: lfa3.134203787e9d4f5a9c5c.northeurope.aksapp.io
     http:
       paths:
       - path: /
@@ -27,7 +27,7 @@ spec:
             name: lfa
             port: 
               number: 5001
-  - host: lfa4.96064fddcffb4f8fb419.northeurope.aksapp.io
+  - host: lfa4.134203787e9d4f5a9c5c.northeurope.aksapp.io
     http:
       paths:
       - path: /
@@ -37,7 +37,7 @@ spec:
             name: lfa
             port: 
               number: 5000
-  - host: cs.96064fddcffb4f8fb419.northeurope.aksapp.io
+  - host: cs.134203787e9d4f5a9c5c.northeurope.aksapp.io
     http:
       paths:
       - path: /
