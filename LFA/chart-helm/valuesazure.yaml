@@ -1,7 +1,7 @@
 member:
   replicaCount: 2
   image:
-    repository: acrworkflow1667468595927.azurecr.io/image-workflow-1667468595927
+    repository: acrworkflow1669713859901.azurecr.io/image-workflow-1669713859901
     pullPolicy: Always
     tag: "always.replace.me"
 

@@ -5,14 +5,14 @@ name: Build image and deploy to Azure
             - production
     workflow_dispatch: {}
 env:
-    ACR_RESOURCE_GROUP: Bachelor
-    AZURE_CONTAINER_REGISTRY: acrworkflow1667468595927
+    ACR_RESOURCE_GROUP: BachelorStudent
+    AZURE_CONTAINER_REGISTRY: acrworkflow1669713859901
     CHART_OVERRIDE_PATH: ./LFA/chart-helm/valuesazure.yaml
     CHART_OVERRIDES: ""
     CHART_PATH: ./LFA/chart-helm
-    CLUSTER_NAME: LFA
-    CLUSTER_RESOURCE_GROUP: Bachelor
-    CONTAINER_NAME: image-workflow-1667468595927
+    CLUSTER_NAME: bachelorcluster
+    CLUSTER_RESOURCE_GROUP: BachelorStudent
+    CONTAINER_NAME: image-workflow-1669713859901
 jobs:
     buildImage:
         permissions:
