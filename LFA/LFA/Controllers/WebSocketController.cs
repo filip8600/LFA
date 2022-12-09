@@ -49,7 +49,7 @@ namespace LFA.Controllers
             using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             if (!HttpContext.Request.Headers.TryGetValue("serial-number", out StringValues identity)) identity = "unknown";
             if (HttpContext.Request.QueryString.Value != "") identity = HttpContext.Request.QueryString.Value[1..HttpContext.Request.QueryString.Value.Length];
-            var pid = actorSystem.Root.SpawnPrefix(chargerProps,identity);
+            var pid = actorSystem.Root.SpawnPrefix(chargerProps, identity);
             Debug.WriteLine("Connected to socket with serial-number: " + identity);
             actorSystem.Root.Send(pid, new WebSocketCreated(identity, webSocket));
             await ReceiveMessagesLoop(webSocket, pid);
@@ -68,7 +68,7 @@ namespace LFA.Controllers
                                        new ArraySegment<byte>(buffer), CancellationToken.None);
                     if (!receiveResult.CloseStatus.HasValue)
                     {
-                            actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));   
+                        actorSystem.Root.Send(pid, new Protocol.MessageFromCharger(receiveResult, buffer));
                     }
                 } while (!receiveResult.CloseStatus.HasValue);
             }
@@ -87,7 +87,7 @@ namespace LFA.Controllers
             {
                 //luk actor
                 actorSystem.Root.Poison(pid);
-                Debug.WriteLine("Killed actor with pid: " +pid);
+                Debug.WriteLine("Killed actor with pid: " + pid);
             }
         }
 
@@ -106,8 +106,8 @@ namespace LFA.Controllers
             try
             {
                 authCount++;
-                if (authCount >= 10) authCount = 0; 
-                var result = await actorSystem.Cluster().GetAuthGrain("auth"+authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
+                if (authCount >= 10) authCount = 0;
+                var result = await actorSystem.Cluster().GetAuthGrain("auth" + authCount).Authenticate(authMsg, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(300));
                 if (result == null || result.Validated == false)
                 {
                     Debug.WriteLine("Actor NOT Validated, cutting connection");
@@ -124,7 +124,7 @@ namespace LFA.Controllers
             }
             catch (Exception e)
             {
-                Debug.Print("Could not connect to auth grain"+e);
+                Debug.Print("Could not connect to auth grain" + e);
                 return false;
             }
         }

@@ -1,12 +1,11 @@
+using ChargerMessages;
 using LFA.ActorSetup;
 using LFA.Protocol;
-using Microsoft.AspNetCore.Builder;
-using Proto;
 using LFA.Unit.Test;
+using Proto;
 using Proto.Cluster;
-using ChargerMessages;
-using System.Text;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace LFA
 {
@@ -84,7 +83,7 @@ namespace LFA
         {
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes("")));
             Thread.Sleep(120);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal("",MessageReceivedContent);
+            Assert.Equal("", MessageReceivedContent);
         }
         [Fact]
         public void LongMessageIsForwardedCorrect()
@@ -92,7 +91,7 @@ namespace LFA
             var str = "8792rcyn348975y39478y5cnn0tn03978ctyn93748yctn35ctn89t5y598c7tynt9g54c3gæc546hæc54h5øchcæ6hæ54c5ø hlk65ifhiu34fhc34y t3g3  2 26945 t349823 g3yfg 38f gryfg2 9yr fg8yf g r328yfg2fyugeudfgeruofy3gr f";
             actorSystem.Root.Send(uut, new LFA.Protocol.MessageFromCharger(message, Encoding.Default.GetBytes(str)));
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(str,MessageReceivedContent);
+            Assert.Equal(str, MessageReceivedContent);
         }
         //Commands
         [Fact]
@@ -100,7 +99,7 @@ namespace LFA
         {
             await virtualGrain.StartCharging(CancellationToken.None);
             Thread.Sleep(60);//Waiting for actor logic, actorsystem traffic, spawning and Grain
-            Assert.Equal(1,ws.SendAsyncCalled);
+            Assert.Equal(1, ws.SendAsyncCalled);
         }
         [Fact]
         public async void CommandIsForwardedCorrect()

@@ -1,7 +1,6 @@
-﻿    using Proto;
-using ChargerMessages;
+﻿using ChargerMessages;
+using Proto;
 using Proto.Cluster;
-using Microsoft.Extensions.Hosting;
 
 namespace LFA
 {
@@ -38,7 +37,7 @@ namespace LFA
 
         public override Task StartCharging()
         {
-            if(currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
+            if (currentChargerGateway is not null) Context.Send(currentChargerGateway, new CommandToChargerMessage { Payload = "Turn on, please :)", CommandUid = Guid.NewGuid().ToString() });
             return Task.CompletedTask;
         }
 

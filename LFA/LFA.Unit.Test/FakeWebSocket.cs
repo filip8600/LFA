@@ -41,7 +41,7 @@ namespace LFA
         }
 
         public override async Task SendAsync(ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
-        { 
+        {
             SendAsyncCalled++;
             sentData = buffer;
             await Task.Delay(0);//Fix warning about async/await

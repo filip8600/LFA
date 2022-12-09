@@ -10,13 +10,13 @@ using MessageFromCharger = LFA.Protocol.MessageFromCharger;
 namespace LFA
 {
 
-    
+
     /// <summary>
     /// Actor representing 1 charging staion. Can comunicate with a "real" charger using WebSocekt and Central System using a Virtual Actor Grain
     /// </summary>
-    public class ChargerGatewayActor:IActor
+    public class ChargerGatewayActor : IActor
     {
-        private string identity="uninitializedChargerActor";
+        private string identity = "uninitializedChargerActor";
         private ChargerGrainClient virtualGrain;
         private WebSocket? websocket;
         private ProtoMessage.PID pid;
@@ -28,7 +28,7 @@ namespace LFA
         /// <returns></returns>
         public Task ReceiveAsync(IContext context)
         {
-            var msg =context.Message;
+            var msg = context.Message;
             switch (msg)
             {
                 case Started:
@@ -46,7 +46,7 @@ namespace LFA
                     SendMessage(message);
                     break;
                 case Stopped message:
-                    MessageFromCharger newMessage = new(null,Encoding.ASCII.GetBytes("Offline"));
+                    MessageFromCharger newMessage = new(null, Encoding.ASCII.GetBytes("Offline"));
                     SendMessage(newMessage);
                     break;
                 case Stopping message:
@@ -89,9 +89,9 @@ namespace LFA
                 Msg = ChargerMessage,
                 From = identity,
                 Pid = pid
-                };
-                Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
-                virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
+            };
+            Debug.WriteLine("Message forwarded: " + msg.From + "  " + msg.Msg);
+            virtualGrain.ReceiveMsgFromCharger(msg, CancellationToken.None);//.WaitAsync(TimeSpan.FromSeconds(300));
 
         }
         /// <summary>

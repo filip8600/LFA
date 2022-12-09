@@ -1,7 +1,6 @@
 ﻿using ChargerMessages;
 using Proto;
 using Proto.Cluster;
-using Proto.Cluster.Consul;
 using Proto.Cluster.Kubernetes;
 using Proto.Cluster.Partition;
 using Proto.DependencyInjection;
